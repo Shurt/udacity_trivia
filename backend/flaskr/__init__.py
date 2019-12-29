@@ -152,7 +152,7 @@ def create_app(test_config=None):
     @app.route("/searchQuestions", methods=["POST"])
     def find_questions():
           if request.data:
-                page = int(request.args.get('page')) or 1
+                page = 1
                 query = json.loads(request.data)
                 if query["searchTerm"]:
                       db_query = Question.query.filter(
@@ -211,7 +211,7 @@ def create_app(test_config=None):
           abort(404)
 
     '''
-    @TODO: 
+    @DONE: 
     Create a POST endpoint to get questions to play the quiz. 
     This endpoint should take category and previous question parameters 
     and return a random questions within the given category, 
@@ -226,12 +226,38 @@ def create_app(test_config=None):
     def start_quiz():
           if request.data:
                 quiz_data = json.loads(request.data)
-                query = Question.query.filter_by(
-                  category=quiz["quiz)category"]["id"]
-                )
+
+                if (('quiz_category' in quiz_data
+                 and 'id' in quiz_data['quiz_category'])
+                    and 'previous_questions' in quiz_data):
+
+                      if quiz_data['quiz_category']['id'] == 0:
+                            quiz_data['quiz_category']['id'] = random.randint(1, 6)
+                            
+                      query = Question.query.filter_by(
+                        category=quiz_data["quiz_category"]["id"]
+                      ).filter(
+                        Question.id.notin_(quiz_data['previous_questions'])
+                      ).all()
+
+                      if len(query) > 0:
+                            return jsonify({
+                              "success": True,
+                              "question": Question.format(
+                                query[random.randrange(0, len(query))]
+                              )
+                            })
+                      else:
+                            return jsonify({
+                              "success": True,
+                              "question": None
+                            })
+                abort(404)
+          abort(422)
+                          
 
     '''
-    @TODO: 
+    @DONE: 
     Create error handlers for all expected errors 
     including 404 and 422. 
     '''

@@ -66,32 +66,265 @@ One note before you delve into your tasks: for each endpoint you are expected to
 8. Create a POST endpoint to get questions to play the quiz. This endpoint should take category and previous question parameters and return a random questions within the given category, if provided, and that is not one of the previous questions. 
 9. Create error handlers for all expected errors including 400, 404, 422 and 500. 
 
+---
 
-TODO: Start documentation here.
+DONE: Start documentation here.
 
+# API Documentation:
 
-REVIEW_COMMENT
-```
-This README is missing documentation of your endpoints. Below is an example for your endpoint to get all categories. Please use it as a reference for creating your documentation and resubmit your code. 
-
-Endpoints
-GET '/categories'
-GET ...
-POST ...
-DELETE ...
-
-GET '/categories'
-- Fetches a dictionary of categories in which the keys are the ids and the value is the corresponding string of the category
-- Request Arguments: None
-- Returns: An object with a single key, categories, that contains a object of id: category_string key:value pairs. 
-{'1' : "Science",
-'2' : "Art",
-'3' : "Geography",
-'4' : "History",
-'5' : "Entertainment",
-'6' : "Sports"}
-
-```
+* GET `/categories`:
+    - Produces a dictionary of available categories from the database.
+    - Arguments: None
+    - Response: Available categories
+        * Example:
+            ```json
+            {
+                "success": true,
+                "categories": [
+                    {
+                        "id": 1,
+                        "type": "Science"
+                    },
+                    {
+                        "id": 2,
+                        "type": "Art"
+                    },
+                    {
+                        "id": 3,
+                        "type": "Geography"
+                    },
+                    {
+                        "id": 4,
+                        "type": "History"
+                    },
+                    {
+                        "id": 5,
+                        "type": "Entertainment"
+                    },
+                    {
+                        "id": 6,
+                        "type": "Sports"
+                    },
+            ]}
+            ```
+* GET `/questions?page=[page_number]`:
+    - Produces a dictionary of questions, which provides the answer, category, difficulty, id and question text.
+    - Arguments: page_number => page number of questions.
+    - Response: List of questions, count of total questions, current category, and list of categories.
+        * Example:
+            ```json
+            {
+            "questions": [
+                {
+                    "answer": "Maya Angelou",
+                    "category": 4,
+                    "difficulty": 2,
+                    "id": 5,
+                    "question": "Whose autobiography is entitled 'I Know Why the Caged Bird Sings'?"
+                },
+                {
+                    "answer": "Muhammad Ali",
+                    "category": 4,
+                    "difficulty": 1,
+                    "id": 9,
+                    "question": "What boxer's original name is Cassius Clay?"
+                },
+                {
+                    "answer": "Apollo 13",
+                    "category": 5,
+                    "difficulty": 4,
+                    "id": 2,
+                    "question": "What movie earned Tom Hanks his third straight Oscar nomination, in 1996?"
+                },
+                {
+                    "answer": "Tom Cruise",
+                    "category": 5,
+                    "difficulty": 4,
+                    "id": 4,
+                    "question": "What actor did author Anne Rice first denounce, then praise in the role of her beloved Lestat?"
+                },
+                {
+                    "answer": "Edward Scissorhands",
+                    "category": 5,
+                    "difficulty": 3,
+                    "id": 6,
+                    "question": "What was the title of the 1990 fantasy directed by Tim Burton about a young man with multi-bladed appendages?"
+                },
+                {
+                    "answer": "Brazil",
+                    "category": 6,
+                    "difficulty": 3,
+                    "id": 10,
+                    "question": "Which is the only team to play in every soccer World Cup tournament?"
+                },
+                {
+                    "answer": "Uruguay",
+                    "category": 6,
+                    "difficulty": 4,
+                    "id": 11,
+                    "question": "Which country won the first ever soccer World Cup in 1930?"
+                },
+                {
+                    "answer": "George Washington Carver",
+                    "category": 4,
+                    "difficulty": 2,
+                    "id": 12,
+                    "question": "Who invented Peanut Butter?"
+                },
+                {
+                    "answer": "Lake Victoria",
+                    "category": 3,
+                    "difficulty": 2,
+                    "id": 13,
+                    "question": "What is the largest lake in Africa?"
+                },
+                {
+                    "answer": "The Palace of Versailles",
+                    "category": 3,
+                    "difficulty": 3,
+                    "id": 14,
+                    "question": "In which royal palace would you find the Hall of Mirrors?"
+                }
+            ],
+            "page": 1,
+            "totalQuestions": 19,
+            "categories": {
+                "1": "Science",
+                "2": "Art",
+                "3": "Geography",
+                "4": "History",
+                "5": "Entertainment",
+                "6": "Sports"
+            }
+            }
+            ```
+* DELETE `/questions/[question_id]`:
+    - Removes a question from the database.
+    - Arguments: question_id => ID of the question to be deleted.
+        * Example:
+            ```json
+            {
+                "question_id": 10
+            }
+            ```
+    - Response: Success or failure message.
+        * Example:
+            ```json
+            {
+                "success": true
+            }
+            ```
+* POST `/questions`:
+    - Creates a question with the supplied data.
+    - Arguments: question => Question text, answer => Answer text, difficulty => Question difficulty, category => Question category
+        * Example:
+            ```json
+            {
+                "question": "What is the secret of life, the universe and everything?",
+                "answer": "42",
+                "difficulty": "5",
+                "category": 1
+            }
+            ```
+    - Response: Success or failure message.
+        * Example:
+            ```json
+            {
+                "success": true
+            }
+            ```
+* POST `/searchQuestions`:
+    - Searches the database for the supplied query.
+    - Arguments: searchTerm => Search query
+        * Example:
+            ```json
+            {
+                "searchTerm": "secret to life"
+            }
+            ```
+    - Response: List of questions matching the query, number of questions matching and current category
+        * Example:
+            ```json
+            {
+                "current_category": 1,
+                "questions": [
+                    {
+                        "question": "What is the secret of life, the universe and everything?",
+                        "answer": "42",
+                        "difficulty": "5",
+                        "category": 1
+                    }
+                ],
+                "total_questions": 1,
+                "success": true
+            }
+            ```
+* GET `/categories/[category_id]/questions?page=[page_number]`:
+    - Retrieve questions based on the supplied category ID.
+    - Arguments: category_id => Category ID number, page_number => current page of questions
+        * Example:
+            ```json
+            {
+                "category_id": 6,
+                "page_number": 2
+            }
+            ```
+    - Response: Lists all questions matching the provided category, the total number of questions matching that category, current category and all categories
+        * Example:
+            ```json
+            {
+                "questions": [
+                    {
+                        "answer": "Brazil",
+                        "category": 6,
+                        "difficulty": 3,
+                        "id": 10,
+                        "question": "Which is the only team to play in every soccer World Cup tournament?"
+                    },
+                    {
+                        "answer": "Uruguay",
+                        "category": 6,
+                        "difficulty": 4,
+                        "id": 11,
+                        "question": "Which country won the first ever soccer World Cup in 1930?"
+                    },
+                ],
+                "totalQuestions": 19,
+                "categories": {
+                    "1": "Science",
+                    "2": "Art",
+                    "3": "Geography",
+                    "4": "History",
+                    "5": "Entertainment",
+                    "6": "Sports"
+                }
+            }
+            ```
+* POST `/quizzes`:
+    - Returns list of questions for starting the quiz.
+    - Arguments: quiz_category => Category to select questions from, previous_questions => array containing the previous questions asked during this quiz.
+        * Example:
+            ```json
+            {
+                "previous_questions": [],
+                "quiz_category": {
+                    "type": "Sports",
+                    "id": 6
+                }
+            }
+            ```
+    - Response: Randomized set of questions from the provided category.
+        * Example:
+            ```json
+            {
+                "answer": "Uruguay",
+                "category": 6,
+                "difficulty": 4,
+                "id": 11,
+                "question": "Which country won the first ever soccer World Cup in 1930?"
+            }
+            ```
+        
 
 
 ## Testing
